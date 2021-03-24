@@ -1,0 +1,29 @@
+
+from input.read_document import Sample
+from jinja2 import Environment, FileSystemLoader
+import os
+import webbrowser
+from sys import argv
+import time
+
+def main(writing_source):
+    env = Environment(loader=FileSystemLoader(["templates", "static"]))
+    env.globals['STATIC_PREFIX'] = '../static/'
+    template = env.get_template('new_results.html')
+
+    root = os.path.dirname(os.path.abspath(__file__))
+    
+    text = Sample(writing_source)
+    
+    filename = os.path.join(root, 'html', text.file_name + ".html")
+    with open(filename, 'w') as fh:
+        fh.write(template.render(object=text))
+    #result = template.render(object=text)
+    if os.path.exists(filename):
+
+        webbrowser.open(filename, new=1)
+        time.sleep(.9)
+        os.remove(filename)
+
+if __name__ == "__main__": 
+    main(argv[1])
